@@ -38,12 +38,14 @@ export function Auth() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
+        }, {
+          redirectTo: `${import.meta.env.VITE_APP_URL}/auth`
         });
         if (error) throw error;
         toast.success('Check your email for the confirmation link!');
       } else if (authMode === 'forgot_password') {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: window.location.origin + '/reset-password',
+          redirectTo: `${import.meta.env.VITE_APP_URL}/reset-password`,
         });
         if (error) throw error;
         toast.success('Check your email for the password reset link!');
