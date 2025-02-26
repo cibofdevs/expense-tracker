@@ -1,13 +1,13 @@
 # Expense Tracker App
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/your-site-id/deploy-status)](https://app.netlify.com/sites/expense-tracker/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/645d7c3a-7c77-41e2-a42d-3006da3f3bc2/deploy-status)](https://app.netlify.com/sites/expense-tracker/deploys)
 [![CI/CD](https://github.com/cibofdevs/expense-tracker/actions/workflows/ci.yml/badge.svg)](https://github.com/cibofdevs/expense-tracker/actions/workflows/ci.yml)
 
 A modern and intuitive expense tracking application built with React, TypeScript, and Supabase. Track your expenses, manage your budget, and gain insights into your spending habits with beautiful visualizations and a responsive UI.
 
 ## Live Demo
 
-Visit the live application at: [https://expense-tracker.netlify.app](https://expense-tracker.netlify.app)
+Visit the live application at: [https://expense-cibofdevs.netlify.app](https://expense-cibofdevs.netlify.app)
 
 ## Features
 
