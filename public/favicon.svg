@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" rx="128" fill="url(#gradient)"/>
+  
+  <!-- Chart Icon -->
+  <path d="M160 352V240" stroke="white" stroke-width="32" stroke-linecap="round"/>
+  <path d="M256 352V160" stroke="white" stroke-width="32" stroke-linecap="round"/>
+  <path d="M352 352V208" stroke="white" stroke-width="32" stroke-linecap="round"/>
+  
+  <!-- Coin -->
+  <circle cx="256" cy="256" r="160" stroke="white" stroke-width="32" stroke-opacity="0.2"/>
+  
+  <!-- Gradient Definition -->
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4477FF"/>
+      <stop offset="100%" stop-color="#3366EE"/>
+    </linearGradient>
+  </defs>
+</svg>
