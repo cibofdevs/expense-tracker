@@ -38,8 +38,9 @@ export function Auth() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-        }, {
-          redirectTo: `${import.meta.env.VITE_APP_URL}/auth`
+          options: {
+            emailRedirectTo: `${import.meta.env.VITE_APP_URL}/auth`
+          }
         });
         if (error) throw error;
         toast.success('Check your email for the confirmation link!');
