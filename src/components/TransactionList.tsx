@@ -1,4 +1,3 @@
-import React from 'react';
 import { format } from 'date-fns';
 import { Pencil, Trash2, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
@@ -33,27 +32,6 @@ export function TransactionList({ transactions, onEditExpense, onEditIncome, onD
       toast.error(`Failed to delete ${transaction.type}`);
     }
   };
-
-  const getCategoryDisplay = (transaction: Transaction) => {
-    if (!transaction.category) return '-';
-    
-    return (
-      <div className="flex items-center">
-        <span className="mr-2" style={{ color: transaction.category.color }}>
-          {transaction.category.icon}
-        </span>
-        <span>{transaction.category.name}</span>
-      </div>
-    );
-  };
-
-  const getTypeIcon = (type: 'expense' | 'income') => {
-    if (type === 'expense') {
-      return <ArrowDownCircle className="w-4 h-4 text-red-500" />;
-    }
-    return <ArrowUpCircle className="w-4 h-4 text-green-500" />;
-  };
-
   return (
     <div className="overflow-x-auto rounded-xl">
       <table className="min-w-full">

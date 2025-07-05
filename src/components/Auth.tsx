@@ -4,7 +4,11 @@ import { toast } from 'react-hot-toast';
 import { BarChart3, Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
-export function Auth() {
+interface AuthProps {
+  onSuccess?: () => void;
+}
+
+export function Auth({ onSuccess }: AuthProps) {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -34,6 +38,7 @@ export function Auth() {
         });
         if (error) throw error;
         toast.success('Successfully logged in!');
+        onSuccess?.();
       } else if (authMode === 'sign_up') {
         const { error } = await supabase.auth.signUp({
           email,

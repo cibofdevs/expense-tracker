@@ -56,27 +56,6 @@ export function setStoredCurrency(currency: string): void {
   localStorage.setItem(CURRENCY_STORAGE_KEY, currency);
 }
 
-export function formatCurrency(amount: number, currency: string): string {
-  const localeMap: Record<string, string> = {
-    'IDR': 'id-ID',
-    'AED': 'ar-AE',
-    'USD': 'en-US'
-  };
-
-  const locale = localeMap[currency] || 'en-US';
-  
-  // Special handling for IDR to show without decimal places
-  const options: Intl.NumberFormatOptions = {
-    style: 'currency',
-    currency: currency,
-    minimumFractionDigits: currency === 'IDR' ? 0 : 2,
-    maximumFractionDigits: currency === 'IDR' ? 0 : 2,
-    currencyDisplay: 'symbol'
-  };
-
-  return new Intl.NumberFormat(locale, options).format(amount);
-}
-
 export async function fetchExchangeRate(fromCurrency: string, toCurrency: string): Promise<number> {
   console.log(`Fetching exchange rate from ${fromCurrency} to ${toCurrency}`);
   

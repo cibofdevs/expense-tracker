@@ -4,7 +4,6 @@ import { toast } from 'react-hot-toast';
 import { supabase } from '../lib/supabase';
 import { getStoredCurrency, setStoredCurrency } from '../lib/currency';
 import type { ExpenseFormData, Category, Expense } from '../types';
-import { X } from 'lucide-react';
 
 type ExpenseFormProps = {
   onSuccess: () => void;

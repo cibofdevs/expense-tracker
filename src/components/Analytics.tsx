@@ -1,4 +1,3 @@
-import React from 'react';
 import { format, subMonths, isWithinInterval, startOfMonth, endOfMonth } from 'date-fns';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import { DollarSign, Wallet, Wallet2, BarChart3 } from 'lucide-react';

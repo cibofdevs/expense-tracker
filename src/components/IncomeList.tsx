@@ -1,4 +1,3 @@
-import React from 'react';
 import { format } from 'date-fns';
 import { Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
@@ -28,19 +27,6 @@ export function IncomeList({ records, onEdit, onDelete, formatCurrency }: Income
       toast.error('Failed to delete income record');
     }
   };
-
-  const getCategoryDisplay = (record: IncomeRecord) => {
-    if (record.category) {
-      return (
-        <div className="flex items-center">
-          <span className="mr-2">{record.category.icon}</span>
-          <span>{record.category.name}</span>
-        </div>
-      );
-    }
-    return '-';
-  };
-
   return (
     <div className="overflow-x-auto rounded-xl">
       <table className="min-w-full">

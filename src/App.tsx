@@ -1,25 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
   Menu, 
   X as XIcon, 
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Calendar,
   Settings,
   LogOut,
   BarChart3,
-  Bell,
   List,
   PieChart,
-  Plus,
-  User,
   Wallet,
   DollarSign,
   Tags,
   CalendarDays
 } from 'lucide-react';
-import { Toaster } from 'react-hot-toast';
+import {toast, Toaster} from 'react-hot-toast';
 import { format, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import { supabase } from './lib/supabase';
 import { ExpenseForm } from './components/ExpenseForm';
@@ -27,10 +23,7 @@ import { ExpenseList } from './components/ExpenseList';
 import { ExpenseCharts } from './components/ExpenseCharts';
 import { Auth } from './components/Auth';
 import { SettingsPage } from './pages/SettingsPage';
-import { UserProfile } from './components/UserProfile';
 import { setTheme } from './lib/theme';
-import { NotificationList } from './components/NotificationList';
-import { BudgetAllocationForm } from './components/BudgetAllocationForm';
 import { IncomeForm } from './components/IncomeForm';
 import { IncomeList } from './components/IncomeList';
 import { TransactionList } from './components/TransactionList';
@@ -56,8 +49,8 @@ const AppWrapper = () => {
 };
 
 const AppContent = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
+  useLocation();
+  useNavigate();
 
   return (
     <Routes>
@@ -104,11 +97,10 @@ const MainApp = ({ initialMenu }: MainAppProps) => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [filteredExpenses, setFilteredExpenses] = useState<Expense[]>([]);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
-  const [showAuth, setShowAuth] = useState(false);
+  const [, setShowAuth] = useState(false);
   const [user, setUser] = useState<{ id: string; email: string } | null>(null);
   const [userPreferences, setUserPreferences] = useState<UserPreferences | null>(null);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [showNotifications, setShowNotifications] = useState(false);
+  const [, setNotifications] = useState<Notification[]>([]);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [showBudgetForm, setShowBudgetForm] = useState(false);
   const [showCategoryForm, setShowCategoryForm] = useState(false);
@@ -423,21 +415,6 @@ const MainApp = ({ initialMenu }: MainAppProps) => {
     }
   };
 
-  const handleMarkAsRead = async (id: string) => {
-    try {
-      const { error } = await supabase
-        .from('notifications')
-        .update({ read: true })
-        .eq('id', id);
-
-      if (error) throw error;
-      
-      await fetchNotifications();
-    } catch (error) {
-      console.error('Error marking notification as read:', error);
-    }
-  };
-
   const formatCurrency = (amount: number, currency: string) => {
     const localeMap: Record<string, string> = {
       'IDR': 'id-ID',
@@ -514,43 +491,6 @@ const MainApp = ({ initialMenu }: MainAppProps) => {
     return days;
   };
 
-  const renderCalendar = () => {
-    const days = generateCalendarDays();
-    const weeks = [];
-    let week = [];
-
-    for (let i = 0; i < days.length; i++) {
-      week.push(days[i]);
-      if (week.length === 7 || i === days.length - 1) {
-        weeks.push(
-          <tr key={`week-${weeks.length}`}>
-            {week.map((day, index) => (
-              <td key={index} className="p-2 text-center cursor-pointer transition-colors duration-300">
-                {day && (
-                  <button
-                    onClick={() => handleDateClick(day)}
-                    className={`p-2 text-sm rounded-lg text-gray-700 dark:text-gray-200
-                      ${!day ? 'invisible' : 'hover:bg-blue-100 dark:hover:bg-blue-900/50'}
-                      ${day && isWithinInterval(new Date(day), {
-                        start: new Date(dateRange.start),
-                        end: new Date(dateRange.end)
-                      }) ? 'bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700' : ''}
-                    `}
-                  >
-                    {day ? format(new Date(day), 'd') : ''}
-                  </button>
-                )}
-              </td>
-            ))}
-          </tr>
-        );
-        week = [];
-      }
-    }
-
-    return weeks;
-  };
-
   const renderContent = () => {
     switch (activeMenu) {
       case 'expenses':
@@ -596,92 +536,94 @@ const MainApp = ({ initialMenu }: MainAppProps) => {
             />
           </div>
         );
-      case 'transactions':
+      case 'transactions': {
         const allTransactions = [
           ...filteredExpenses.map(expense => ({ ...expense, type: 'expense' as const })),
           ...filteredIncome.map(income => ({ ...income, type: 'income' as const }))
         ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
         return (
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm transition-colors duration-300">
-            <h3 className="text-lg font-semibold mb-6 dark:text-white">All Transactions</h3>
-            <TransactionList
-              transactions={allTransactions}
-              onEditExpense={setEditingExpense}
-              onEditIncome={setEditingIncome}
-              onDelete={() => {
-                fetchExpenses();
-                fetchIncomeRecords();
-              }}
-              formatCurrency={formatCurrencyWithPreferences}
-            />
-          </div>
-        );
-      case 'budget':
-        const totalIncome = filteredIncome.reduce((sum, inc) => sum + inc.amount, 0);
-        
-        return (
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm transition-colors duration-300">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-semibold dark:text-white">Budget Management</h3>
-              <button
-                onClick={() => setShowBudgetForm(true)}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-300"
-              >
-                Manage Budget Allocation
-              </button>
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm transition-colors duration-300">
+              <h3 className="text-lg font-semibold mb-6 dark:text-white">All Transactions</h3>
+              <TransactionList
+                  transactions={allTransactions}
+                  onEditExpense={setEditingExpense}
+                  onEditIncome={setEditingIncome}
+                  onDelete={() => {
+                    fetchExpenses();
+                    fetchIncomeRecords();
+                  }}
+                  formatCurrency={formatCurrencyWithPreferences}
+              />
             </div>
-            <div className="grid gap-6">
-              {categories
-                .filter(cat => cat.type === 'expense')
-                .map(category => {
-                  const totalSpent = filteredExpenses
-                    .filter(exp => exp.category_id === category.id)
-                    .reduce((sum, exp) => sum + exp.amount, 0);
-                  
-                  const monthlyBudget = category.budget_percentage 
-                    ? (totalIncome * (category.budget_percentage / 100))
-                    : 0;
-                  
-                  const percentage = monthlyBudget > 0 
-                    ? (totalSpent / monthlyBudget) * 100
-                    : 0;
+        );
+      }
+      case 'budget': {
+        const totalIncome = filteredIncome.reduce((sum, inc) => sum + inc.amount, 0);
 
-                  return (
-                    <div key={category.id} className="p-4 border dark:border-gray-700 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <span style={{ color: category.color }}>{category.icon}</span>
-                          <span className="font-medium dark:text-white">{category.name}</span>
-                        </div>
-                        <span className="text-sm text-gray-500 dark:text-gray-400">
+        return (
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm transition-colors duration-300">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-semibold dark:text-white">Budget Management</h3>
+                <button
+                    onClick={() => setShowBudgetForm(true)}
+                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-300"
+                >
+                  Manage Budget Allocation
+                </button>
+              </div>
+              <div className="grid gap-6">
+                {categories
+                    .filter(cat => cat.type === 'expense')
+                    .map(category => {
+                      const totalSpent = filteredExpenses
+                          .filter(exp => exp.category_id === category.id)
+                          .reduce((sum, exp) => sum + exp.amount, 0);
+
+                      const monthlyBudget = category.budget_percentage
+                          ? (totalIncome * (category.budget_percentage / 100))
+                          : 0;
+
+                      const percentage = monthlyBudget > 0
+                          ? (totalSpent / monthlyBudget) * 100
+                          : 0;
+
+                      return (
+                          <div key={category.id} className="p-4 border dark:border-gray-700 rounded-lg">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <span style={{ color: category.color }}>{category.icon}</span>
+                                <span className="font-medium dark:text-white">{category.name}</span>
+                              </div>
+                              <span className="text-sm text-gray-500 dark:text-gray-400">
                           {formatCurrencyWithPreferences(totalSpent)} / {formatCurrencyWithPreferences(monthlyBudget)}
                         </span>
-                      </div>
-                      <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full rounded-full ${
-                            percentage > 100 ? 'bg-red-500' : 'bg-blue-500'
-                          }`}
-                          style={{ width: `${Math.min(percentage, 100)}%` }}
-                        />
-                      </div>
-                      <div className="flex justify-between mt-1 text-sm">
+                            </div>
+                            <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                              <div
+                                  className={`h-full rounded-full ${
+                                      percentage > 100 ? 'bg-red-500' : 'bg-blue-500'
+                                  }`}
+                                  style={{ width: `${Math.min(percentage, 100)}%` }}
+                              />
+                            </div>
+                            <div className="flex justify-between mt-1 text-sm">
                         <span className={`font-medium ${
-                          percentage > 100 ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'
+                            percentage > 100 ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'
                         }`}>
                           {percentage.toFixed(1)}% used
                         </span>
-                        <span className="text-gray-500 dark:text-gray-400">
+                              <span className="text-gray-500 dark:text-gray-400">
                           {category.budget_percentage}% of income
                         </span>
-                      </div>
-                    </div>
-                  );
-                })}
+                            </div>
+                          </div>
+                      );
+                    })}
+              </div>
             </div>
-          </div>
         );
+      }
       case 'analytics':
         return (
           <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm transition-colors duration-300">
@@ -1286,7 +1228,7 @@ const MainApp = ({ initialMenu }: MainAppProps) => {
       {(showCategoryForm || editingCategory) && (
         <CategoryForm
           type={editingCategory?.type || 'expense'}
-          category={editingCategory}
+          category={editingCategory ?? undefined}
           onSuccess={() => {
             setShowCategoryForm(false);
             setEditingCategory(null);
@@ -1335,7 +1277,7 @@ const MainApp = ({ initialMenu }: MainAppProps) => {
             </div>
             <ExpenseForm
               onSuccess={handleExpenseSuccess}
-              expense={editingExpense}
+              expense={editingExpense ?? undefined}
               onCancel={() => {
                 setShowAddExpense(false);
                 setEditingExpense(null);

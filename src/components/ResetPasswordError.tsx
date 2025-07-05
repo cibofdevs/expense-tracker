@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { BarChart3, AlertCircle } from 'lucide-react';
 

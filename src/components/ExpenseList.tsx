@@ -1,4 +1,3 @@
-import React from 'react';
 import { format } from 'date-fns';
 import { Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
@@ -28,21 +27,6 @@ export function ExpenseList({ expenses, onEdit, onDelete, formatCurrency }: Expe
       toast.error('Failed to delete expense');
     }
   };
-
-  const getCategoryDisplay = (expense: Expense) => {
-    if (expense.category) {
-      return (
-        <div className="flex items-center">
-          <span className="mr-2" style={{ color: expense.category.color }}>
-            {expense.category.icon}
-          </span>
-          <span>{expense.category.name}</span>
-        </div>
-      );
-    }
-    return '-';
-  };
-
   return (
     <div className="overflow-x-auto rounded-xl">
       <table className="min-w-full">

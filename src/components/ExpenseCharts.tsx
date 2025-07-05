@@ -1,5 +1,4 @@
-import React from 'react';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import {Chart as ChartJS, ArcElement, Tooltip, Legend, TooltipItem} from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 import type { Category, Expense } from '../types';
 
@@ -72,7 +71,7 @@ export function ExpenseCharts({ categories, expenses }: ExpenseChartsProps) {
           pointStyle: 'circle',
           font: {
             size: 12,
-            weight: '500'
+            weight: 500
           }
         }
       },
@@ -82,7 +81,7 @@ export function ExpenseCharts({ categories, expenses }: ExpenseChartsProps) {
         bodyColor: '#1F2937',
         bodyFont: {
           size: 12,
-          weight: '500'
+          weight: 500
         },
         padding: 12,
         boxPadding: 8,
@@ -93,9 +92,9 @@ export function ExpenseCharts({ categories, expenses }: ExpenseChartsProps) {
         borderColor: 'rgba(0, 0, 0, 0.1)',
         borderWidth: 1,
         callbacks: {
-          label: (context: any) => {
+          label: (context: TooltipItem<'pie'>) => {
             const label = context.label || '';
-            const value = context.raw || 0;
+            const value = typeof context.raw === 'number' ? context.raw : 0;
             return `${label}: ${value.toFixed(1)}%`;
           },
         },
